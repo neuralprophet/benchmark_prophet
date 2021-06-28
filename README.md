@@ -30,7 +30,7 @@ kedro install
 You can run your Kedro project with:
 
 ```
-kedro run
+sudo kedro run --pipeline cv --params input:test
 ```
 
 ## How to test your Kedro project
