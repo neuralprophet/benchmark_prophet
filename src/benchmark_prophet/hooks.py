@@ -34,9 +34,34 @@ from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from kedro.versioning import Journal
+from benchmark_prophet.pipelines.data_preprocessing import pipeline as dp
+from benchmark_prophet.pipelines.cross_validation import pipeline as cv
+# from benchmark_prophet.pipelines.testing import pipeline as test
+from benchmark_prophet.io.datasets.ts_dataset import TimeSeriesDataSet
+
+import warnings
+
+warnings.filterwarnings("ignore")
 
 
 class ProjectHooks:
+    @hook_impl
+    def before_pipeline_run(self, run_params: Dict[str, Any], pipeline, catalog):
+        """A hook implementation to add a catalog entry
+        based on the filename passed to the command line, e.g.:
+            kedro run --params=input:time_series_1.ts
+            kedro run --params=input:time_series_2.ts
+            kedro run --params=input:time_series_3.ts
+        """
+        try:
+            filename = run_params["extra_params"]["input"]
+            # add input dataset
+            input_dataset_name = "time_series_input"
+            input_dataset = TimeSeriesDataSet(filepath=f"data/01_raw/{filename}.ts")
+            catalog.add(input_dataset_name, input_dataset)
+        except:
+            pass
+
     @hook_impl
     def register_pipelines(self) -> Dict[str, Pipeline]:
         """Register the project's pipeline.
@@ -64,3 +89,28 @@ class ProjectHooks:
         return DataCatalog.from_config(
             catalog, credentials, load_versions, save_version, journal
         )
+
+    @hook_impl
+    def register_pipelines(self) -> Dict[str, Pipeline]:
+        """Register the project's pipeline.
+
+        Returns:
+            A mapping from a pipeline name to a ``Pipeline`` object.
+
+        """
+        dp_pipeline = dp.create_pipeline()
+        cv_pipeline = cv.create_pipeline()
+        # test_pipeline = test.create_pipeline()
+
+
+        return {
+            "dp": dp_pipeline,
+            "cv": cv_pipeline,
+            # "test": test_pipeline,
+            "__default__": dp_pipeline
+            + cv_pipeline
+            # + test_pipeline
+        }
+
+
+project_hooks = ProjectHooks()

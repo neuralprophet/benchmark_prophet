@@ -2,3 +2,309 @@
 #
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://kedro.readthedocs.io/en/stable/04_user_guide/04_data_catalog.html
+
+time_series_input:
+  type: PartitionedDataSet
+  dataset: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  path: data/01_raw
+  filename_suffix: ".ts"
+
+preprocessed_UCI:
+  type: PartitionedDataSet
+  dataset: pickle.PickleDataSet
+  path: data/02_intermediate/
+  filename_suffix: ".pickle"
+  
+preprocessed_time_series:
+  type: PartitionedDataSet
+  dataset: pickle.PickleDataSet
+  path: data/02_intermediate/
+  filename_suffix: ".pickle"
+
+results_cv:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/03_cv/
+  filename_suffix: ".csv"
+
+results_cv_with_predictions:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/03_cv/
+  filename_suffix: ".csv"
+
+results_cv_with_predictions_refactored:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/04_cv/
+  filename_suffix: ".csv"
+
+results_cv_vanilla:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/03_cv_vanilla/
+  filename_suffix: ".csv"
+
+
+results_cv_vanilla_with_predictions:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/03_cv_vanilla/
+  filename_suffix: ".csv"
+
+
+
+
+
+results_test:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/03_test/
+  filename_suffix: ".csv"
+
+results_test_vanilla:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/03_test_vanilla/
+  filename_suffix: ".csv"
+
+FiveCitiesPMData_Guangzhou:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/FiveCitiesPMData_Guangzhou.ts
+  
+PRSA_Wanshouxigong:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Wanshouxigong.ts
+  
+TrafficBrazil:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/TrafficBrazil.ts
+  
+Parking_Birmingham_Others-CCCPS8:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Others-CCCPS8.ts
+  
+Parking_Birmingham_NIA North:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_NIA North.ts
+  
+AirQualityUCI:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/AirQualityUCI.ts
+  
+Parking_Birmingham_BHMBRCBRG02:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBRCBRG02.ts
+  
+Parking_Birmingham_Shopping:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Shopping.ts
+  
+PRSA_Nongzhanguan:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Nongzhanguan.ts
+  
+Parking_Birmingham_Others-CCCPS105a:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Others-CCCPS105a.ts
+  
+Parking_Birmingham_BHMBCCTHL01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBCCTHL01.ts
+  
+PRSA_Guanyuan:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Guanyuan.ts
+  
+Parking_Birmingham_BHMBRCBRG03:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBRCBRG03.ts
+  
+FiveCitiesPMData_Shanghai:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/FiveCitiesPMData_Shanghai.ts
+  
+Parking_Birmingham_BHMEURBRD02:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMEURBRD02.ts
+  
+PRSA_Aotizhongxin:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Aotizhongxin.ts
+  
+PRSA_Dingling:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Dingling.ts
+  
+PRSA_Dongsi:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Dongsi.ts
+  
+PRSA_Wanliu:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Wanliu.ts
+  
+Parking_Birmingham_BHMBCCPST01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBCCPST01.ts
+  
+FiveCitiesPMData_Chengdu:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/FiveCitiesPMData_Chengdu.ts
+  
+DailyDemandForecastingOrders:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/DailyDemandForecastingOrders.ts
+  
+Parking_Birmingham_Others-CCCPS133:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Others-CCCPS133.ts
+  
+Parking_Birmingham_Bull Ring:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Bull Ring.ts
+  
+Parking_Birmingham_BHMBCCSNH01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBCCSNH01.ts
+  
+PRSA_Tiantan:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Tiantan.ts
+  
+Parking_Birmingham_BHMMBMMBX01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMMBMMBX01.ts
+  
+Parking_Birmingham_Broad Street:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Broad Street.ts
+  
+Parking_Birmingham_NIA South:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_NIA South.ts
+  
+FiveCitiesPMData_Shenyang:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/FiveCitiesPMData_Shenyang.ts
+  
+Parking_Birmingham_NIA Car Parks:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_NIA Car Parks.ts
+  
+Parking_Birmingham_Others-CCCPS202:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Others-CCCPS202.ts
+  
+Parking_Birmingham_BHMNCPLDH01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMNCPLDH01.ts
+  
+Parking_Birmingham_Others-CCCPS98:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Others-CCCPS98.ts
+  
+Parking_Birmingham_BHMNCPNHS01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMNCPNHS01.ts
+  
+Parking_Birmingham_BHMNCPHST01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMNCPHST01.ts
+  
+ElectricityLoadDiagrams:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/ElectricityLoadDiagrams.ts
+  
+Parking_Birmingham_BHMBRTARC01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBRTARC01.ts
+  
+Parking_Birmingham_BHMEURBRD01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMEURBRD01.ts
+  
+Parking_Birmingham_Others-CCCPS119a:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Others-CCCPS119a.ts
+  
+PRSA_Huairou:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Huairou.ts
+  
+PRSA_Changping:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Changping.ts
+  
+Parking_Birmingham_BHMBCCMKT01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBCCMKT01.ts
+  
+EnergyData:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/EnergyData.ts
+  
+Parking_Birmingham_BHMNCPRAN01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMNCPRAN01.ts
+  
+Parking_Birmingham_Others-CCCPS135a:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_Others-CCCPS135a.ts
+  
+FiveCitiesPMData_Beijing:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/FiveCitiesPMData_Beijing.ts
+  
+PRSA_Gucheng:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Gucheng.ts
+  
+MetroInterstateTrafficVolume:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/MetroInterstateTrafficVolume.ts
+  
+HouseholdPower:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/HouseholdPower.ts
+  
+Parking_Birmingham_BHMBRCBRG01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMBRCBRG01.ts
+  
+PRSA_Shunyi:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/PRSA_Shunyi.ts
+  
+Parking_Birmingham_BHMNCPNST01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMNCPNST01.ts
+  
+Parking_Birmingham_BHMNCPPLS01:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/Parking_Birmingham_BHMNCPPLS01.ts
+  
+BeijingPM25:
+  type: np_benchmarking.io.datasets.ts_dataset.TimeSeriesDataSet
+  filepath: data/01_raw/BeijingPM25.ts

@@ -1,0 +1,931 @@
+test_proportion: 0.1 #0.05
+fold_overlap_pct: 0.5 #0
+k: 5
+save_predictions: 1
+use_exact_values: 1
+parameter_list: 'ProphetParameterList'
+preprocessing_type: 'NP'
+method: 'Prophet'
+
+DefaultParameterList:
+    - 'n_lags'
+    - 'n_forecasts'
+SklearnParameterList:
+    - 'random_state'
+    - 'n_lags'
+    - 'n_forecasts'
+ArimaParameterList:
+    - 'n_lags'
+    - 'n_forecasts'
+    - 'ma'
+    - 'i'
+SarimaParameterList:
+    - 'n_lags'
+    - 'n_forecasts'
+    - 'ma'
+    - 'i'
+    - 'seasonal'
+ProphetParameterList:
+    - 'n_forecasts'
+    - 'n_lags'
+
+seasonal:
+    - 24
+
+
+
+
+
+
+
+
+methods_to_include:
+#    - 'gb'
+#    - 'rf'
+#    - 'nn'
+#    - 'prophet'
+    - 'naive'
+#    - 'naive_seasonal'
+    - 'arima'
+#    - 'sarima'
+
+VanillaParamsList:
+    - 'n_lags'
+    - 'n_forecasts'
+    - 'growth'
+    - 'changepoints'
+    - 'n_changepoints'
+    - 'changepoint_range'
+    - 'yearly_seasonality'
+    - 'weekly_seasonality'
+    - 'daily_seasonality'
+    - 'seasonality_mode'
+
+NeuralProphetParamsList:
+    - 'n_forecasts'
+    - 'n_lags'
+    - 'num_hidden_layers'
+    - 'd_hidden'
+    - 'growth'
+    - 'changepoints'
+    - 'n_changepoints'
+    - 'changepoints_range'
+    - 'trend_reg'
+    - 'trend_reg_threshold'
+    - 'yearly_seasonality'
+    - 'weekly_seasonality'
+    - 'daily_seasonality'
+    - 'seasonality_mode'
+    - 'seasonality_reg'
+    - 'ar_sparsity'
+    - 'learning_rate'
+    - 'epochs'
+    - 'batch_size'
+    - 'loss_func'
+    - 'train_speed'
+    - 'normalize'
+    - 'impute_missing'
+    - 'early_stopping'
+    - 'min_delta'
+    - 'patience_p'
+    - 'range_epochs_early_stopping'
+
+Models: #hyper parameter sets
+    - n_lags: 0
+    - n_lags: 2
+      num_hidden_layers: 0
+    - n_lags: 2
+      num_hidden_layers: 1
+      d_hidden: 32
+    - n_lags: 2
+      num_hidden_layers: 4
+      d_hidden: 32
+    - n_lags: 4
+      num_hidden_layers: 0
+    - n_lags: 4
+      num_hidden_layers: 1
+      d_hidden: 32
+    - n_lags: 4
+      num_hidden_layers: 4
+      d_hidden: 32
+
+#log_level: 'CRITICAL'
+random_state:
+    - 42
+ma:
+    - 3
+i:
+    - 1
+n_forecasts:
+    - 1
+#    - 6
+#    - 24
+#    - 72
+#    - 144
+n_lags:
+#    - 0
+    - 12
+#    - 48
+#    - 144
+#    - 4
+#num_hidden_layers:
+#    - 0
+#    - 1
+#    - 2
+#    - 4
+#d_hidden:
+#    - 8
+#    - 16
+#    - 64
+#    - 128
+#growth: 'linear'
+#     changepoints: None
+#n_changepoints:
+#    - 5
+#    - 10
+#    - 100
+#early_stopping:
+#    - 1
+#    - 0
+#min_delta: 0.1
+#patience_p: 0.05
+#range_epochs_early_stopping: 0.6
+#changepoints_range: 0.9
+# duplicate into changepoint_range
+#     trend_reg: 0
+#     trend_reg_threshold: False
+#     yearly_seasonality: 'auto'
+#     weekly_seasonality: 'auto'
+#     daily_seasonality: 'auto'
+#     seasonality_mode: 'additive'
+#     seasonality_reg: None
+#ar_sparsity:
+#    - "None"
+#    - 0.1
+#    - 0.5
+#learning_rate:
+#    - "None"
+#    - 0.001
+#    - 0.01
+#    - 0.1
+#    - 1
+#epochs:
+#    - "None"
+#    - 10
+#    - 40
+#    - 100
+#    - 200
+#     batch_size: None
+#loss_func: 'MSE'
+#train_speed:
+#    - -1
+#    - 0
+#     normalize: 'auto'
+#     impute_missing: True
+
+test:
+    freq: "H"
+    nan_interpolation: "linear"
+
+
+RTEConsumption:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+RaleighPV:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+ERCOTDAM:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+LondonDataStore:
+    n_forecasts:
+        - 1
+        - 7
+        - 21
+    freq: "D"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 7
+        - 21
+        - 60
+AirQualityUCI:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+BeijingPM25:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+DailyDemandForecastingOrders:
+    n_forecasts:
+        - 1
+        - 7
+        - 21
+    freq: "D"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 7
+        - 21
+        - 60
+EnergyData:
+    n_forecasts:
+        - 1
+        - 12
+        - 72
+    freq: "10min"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 24
+        - 72
+        - 144
+FiveCitiesPMData_Beijing:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+FiveCitiesPMData_Chengdu:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+FiveCitiesPMData_Guangzhou:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+FiveCitiesPMData_Shanghai:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+FiveCitiesPMData_Shenyang:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+MetroInterstateTrafficVolume:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Aotizhongxin:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Changping:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Dingling:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Dongsi:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Guanyuan:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Gucheng:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Huairou:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Nongzhanguan:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Shunyi:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Tiantan:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Wanliu:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+PRSA_Wanshouxigong:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "H"
+    nan_interpolation: "linear"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 24
+        - 96
+Parking_Birmingham_BHMBCCMKT01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMBCCPST01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMBCCSNH01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMBCCTHL01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMBRCBRG01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMBRCBRG02:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMBRCBRG03:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMBRTARC01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMEURBRD01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMEURBRD02:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMMBMMBX01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMNCPHST01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMNCPLDH01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMNCPNHS01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMNCPNST01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMNCPPLS01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_BHMNCPRAN01:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Broad Street:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Bull Ring:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_NIA Car Parks:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_NIA North:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_NIA South:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Others-CCCPS105a:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Others-CCCPS119a:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Others-CCCPS133:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Others-CCCPS135a:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Others-CCCPS202:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Others-CCCPS8:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Others-CCCPS98:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+Parking_Birmingham_Shopping:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
+TrafficBrazil:
+    n_forecasts:
+        - 1
+        - 12
+        - 48
+    freq: "30min"
+    nan_interpolation: "zero"
+    n_lags:
+        - 0
+        - 1
+        - 12
+        - 48
+        - 96
