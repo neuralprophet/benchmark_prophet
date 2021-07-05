@@ -25,6 +25,16 @@ To install them, run:
 kedro install
 ```
 
+## How to download data
+
+Files used in benchmarking are contained in .tgz file on Box. In order to get them use the following command:
+
+```
+wget -v -O 02_intermediate.tgz -L https://stanford.box.com/shared/static/rmlbvhmlyopdetnh37rcvbymlkmbujq0
+```
+
+in the `data` folder. Then unarchive the folder in the `data` folder with the same name.
+
 ## How to run your Kedro pipeline
 
 You can run your Kedro project with:
