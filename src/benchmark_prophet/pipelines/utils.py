@@ -1,7 +1,8 @@
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from neuralprophet.time_dataset import tabularize_univariate_datetime
+from neuralprophet.dataset.time_dataset import tabularize_univariate_datetime
 import numpy as np
 from neuralprophet import NeuralProphet
+from neuralprophet import LSTM, NBeats, TFT
 from fbprophet import Prophet
 from time import time
 from statsmodels.tsa.arima.model import ARIMA
@@ -78,6 +79,133 @@ def _train_predict_np(tr, vl, model_parameters, freq, test_size):
             "predicting_time": [predicting_time],
         },
     )
+
+
+def _train_predict_lstm(tr, vl, model_parameters, freq, test_size):
+    t1 = time()
+    m = LSTM(**model_parameters)
+    metrics_tr = m.fit(tr, freq=freq, progress_bar=False)
+    t2 = time()
+    training_time = t2 - t1
+    future_vl = m.make_future_dataframe(vl, n_historic_predictions=test_size)
+    t1 = time()
+    forecast_vl = m.predict(future_vl)
+    t2 = time()
+    predicting_time = t2 - t1
+    conf = m.config_train.__dict__
+    lr = conf["learning_rate"]
+    n_epochs = conf["epochs"]
+    y_rolled, y_pred_rolled = _return_prediction_from_fold(
+        forecast_vl, vl, model_parameters["n_forecasts"], test_size
+    )
+    return (
+        (y_rolled, y_pred_rolled),
+        {
+            "lr": [lr],
+            "n_epoch": [n_epochs],
+            "training_time": [training_time],
+            "predicting_time": [predicting_time],
+        },
+    )
+
+
+def _train_predict_nbeats(tr, vl, model_parameters, freq, test_size):
+    t1 = time()
+    m = NBeats(**model_parameters)
+    metrics_tr = m.fit(tr, freq=freq)
+    t2 = time()
+    training_time = t2 - t1
+    future_vl = m.make_future_dataframe(vl, n_historic_predictions=test_size)
+    t1 = time()
+    forecast_vl = m.predict(future_vl)
+    t2 = time()
+    predicting_time = t2 - t1
+    # conf = m.config_train.__dict__
+    # lr = conf["learning_rate"]
+    # n_epochs = conf["epochs"]
+    y_rolled, y_pred_rolled = _return_prediction_from_fold(
+        forecast_vl, vl, model_parameters["n_forecasts"], test_size
+    )
+    return (
+        (y_rolled, y_pred_rolled),
+        {
+            "training_time": [training_time],
+            "predicting_time": [predicting_time],
+        },
+    )
+
+
+def _train_predict_deepar(tr, vl, model_parameters, freq, test_size):
+    t1 = time()
+    m = DeepAR(**model_parameters)
+    metrics_tr = m.fit(tr, freq=freq)
+    t2 = time()
+    training_time = t2 - t1
+    future_vl = m.make_future_dataframe(vl, n_historic_predictions=test_size)
+    t1 = time()
+    forecast_vl = m.predict(future_vl)
+    t2 = time()
+    predicting_time = t2 - t1
+    y_rolled, y_pred_rolled = _return_prediction_from_fold(
+        forecast_vl, vl, model_parameters["n_forecasts"], test_size
+    )
+    return (
+        (y_rolled, y_pred_rolled),
+        {
+            "training_time": [training_time],
+            "predicting_time": [predicting_time],
+        },
+    )
+
+def _train_predict_tft(tr, vl, model_parameters, freq, test_size):
+    t1 = time()
+    m = TFT(**model_parameters)
+    metrics_tr = m.fit(tr, freq=freq)
+    t2 = time()
+    training_time = t2 - t1
+    future_vl = m.make_future_dataframe(vl, n_historic_predictions=test_size)
+    t1 = time()
+    forecast_vl = m.predict(future_vl)
+    t2 = time()
+    predicting_time = t2 - t1
+    y_rolled, y_pred_rolled = _return_prediction_from_fold(
+        forecast_vl, vl, model_parameters["n_forecasts"], test_size
+    )
+    return (
+        (y_rolled, y_pred_rolled),
+        {
+            "training_time": [training_time],
+            "predicting_time": [predicting_time],
+        },
+    )
+
+#
+# def _train_predict_np(tr, vl, model_parameters, freq, test_size):
+#     t1 = time()
+#     m = NeuralProphet(**model_parameters)
+#     metrics_tr = m.fit(tr, freq=freq, progress_bar=False)
+#     t2 = time()
+#     training_time = t2 - t1
+#     future_vl = m.make_future_dataframe(vl, n_historic_predictions=test_size)
+#     t1 = time()
+#     forecast_vl = m.predict(future_vl)
+#     t2 = time()
+#     predicting_time = t2 - t1
+#     conf = m.config_train.__dict__
+#     lr = conf["learning_rate"]
+#     n_epochs = conf["epochs"]
+#     y_rolled, y_pred_rolled = _return_prediction_from_fold(
+#         forecast_vl, vl, model_parameters["n_forecasts"], test_size
+#     )
+#     return (
+#         (y_rolled, y_pred_rolled),
+#         {
+#             "lr": [lr],
+#             "n_epoch": [n_epochs],
+#             "training_time": [training_time],
+#             "predicting_time": [predicting_time],
+#         },
+#     )
 
 def _train_predict_sklearn(tr, vl, reg, n_forecasts):
     X_tr, y_tr = tr

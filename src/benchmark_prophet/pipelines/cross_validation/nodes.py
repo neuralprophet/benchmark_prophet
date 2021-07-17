@@ -9,6 +9,9 @@ from benchmark_prophet.pipelines.utils import (
     _train_predict_arima,
     _train_predict_sarima,
     _train_predict_prophet,
+    _train_predict_lstm,
+    _train_predict_nbeats,
+    _train_predict_deepar
 )
 from ray import tune
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -38,6 +41,31 @@ def model_cv_run(tr, vl, model_parameters_list, config):
             tr, vl, model_parameters, config["freq"], config["test_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
+
+    elif config["method"].lower() == 'lstm':
+        (y_rolled, y_pred_rolled), additional_info = _train_predict_lstm(
+            tr, vl, model_parameters, config["freq"], config["test_size"]
+        )
+        return (y_rolled, y_pred_rolled), additional_info
+
+    elif config["method"].lower() == 'nbeats':
+        (y_rolled, y_pred_rolled), additional_info = _train_predict_nbeats(
+            tr, vl, model_parameters, config["freq"], config["test_size"]
+        )
+        return (y_rolled, y_pred_rolled), additional_info
+
+    elif config["method"].lower() == 'deepar':
+        (y_rolled, y_pred_rolled), additional_info = _train_predict_deepar(
+            tr, vl, model_parameters, config["freq"], config["test_size"]
+        )
+        return (y_rolled, y_pred_rolled), additional_info
+
+    elif config["method"].lower() == 'tft':
+        (y_rolled, y_pred_rolled), additional_info = _train_predict_tft(
+            tr, vl, model_parameters, config["freq"], config["test_size"]
+        )
+        return (y_rolled, y_pred_rolled), additional_info
+
     elif config["method"].lower() == "prophet":
         n_lags = model_parameters.pop("n_lags")
         n_forecasts = model_parameters.pop("n_forecasts")

@@ -3,9 +3,9 @@ fold_overlap_pct: 0.5 #0
 k: 5
 save_predictions: 1
 use_exact_values: 1
-parameter_list: 'ProphetParameterList'
+parameter_list: 'DeepARParameterList'
 preprocessing_type: 'NP'
-method: 'Prophet'
+method: 'DeepAR'
 
 DefaultParameterList:
     - 'n_lags'
@@ -28,6 +28,30 @@ SarimaParameterList:
 ProphetParameterList:
     - 'n_forecasts'
     - 'n_lags'
+
+LSTMParameterList:
+    - 'n_lags'
+    - 'n_forecasts'
+    - 'num_hidden_layers'
+    - 'd_hidden'
+    - 'learning_rate'
+    - 'epochs'
+
+NBeatsParameterList:
+    - 'n_lags'
+    - 'n_forecasts'
+    - 'epochs'
+    - 'learning_rate'
+
+DeepARParameterList:
+    - 'n_lags'
+    - 'n_forecasts'
+    - 'epochs'
+    - 'learning_rate'
+    - 'hidden_size'
+    - 'rnn_layers'
+
+
 
 seasonal:
     - 24
@@ -128,16 +152,21 @@ n_lags:
 #    - 48
 #    - 144
 #    - 4
-#num_hidden_layers:
+num_hidden_layers:
 #    - 0
-#    - 1
+    - 1
 #    - 2
 #    - 4
-#d_hidden:
-#    - 8
+d_hidden:
+    - 8
 #    - 16
 #    - 64
 #    - 128
+
+hidden_size:
+    - 8
+rnn_layers:
+    - 2
 #growth: 'linear'
 #     changepoints: None
 #n_changepoints:
@@ -163,15 +192,15 @@ n_lags:
 #    - "None"
 #    - 0.1
 #    - 0.5
-#learning_rate:
+learning_rate:
 #    - "None"
-#    - 0.001
+    - 0.001
 #    - 0.01
 #    - 0.1
 #    - 1
-#epochs:
+epochs:
 #    - "None"
-#    - 10
+    - 10
 #    - 40
 #    - 100
 #    - 200
