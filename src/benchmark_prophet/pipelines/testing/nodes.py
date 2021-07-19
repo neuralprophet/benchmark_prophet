@@ -4,7 +4,7 @@ from benchmark_prophet.pipelines.utils import (
     _split_df,
     _crossvalidation_split_df,
     _create_train,
-    preprocess_data_cv,
+    preprocess_data_test,
     _train_predict_np,
     _train_predict_sklearn,
     _train_predict_arima,
@@ -12,7 +12,7 @@ from benchmark_prophet.pipelines.utils import (
     _train_predict_prophet,
     _train_predict_lstm,
     _train_predict_nbeats,
-    _train_predict_deepar,
+    _train_predict_deepar
 )
 from ray import tune
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -33,6 +33,7 @@ def load_data(preprocessed_time_series, params):
         for i in preprocessed_time_series.keys()
         if pattern.match(i)
     ]
+    print(time_series_list)
     dataset = {}
     for ts in time_series_list:
         one_time_series = preprocessed_time_series[ts]().drop_duplicates()
@@ -182,7 +183,7 @@ def run_and_process_results(cv_dataset, model_parameters_list, config):
     return y_true, y_pred
 
 
-def run_cv(dataset, params):
+def run_testing(dataset, params):
     use_exact_values = int(params["use_exact_values"])
 
     method = params["method"]
@@ -225,10 +226,9 @@ def run_cv(dataset, params):
         ts = dataset[config["time_series"]]
         dataset_name = "_".join(config["time_series"].split("_")[:-1])
         freq = params[dataset_name]["freq"]
-        cv_dataset, test_size, train_folds = preprocess_data_cv(
+        cv_dataset, test_size, train_folds = preprocess_data_test(
             ts, params, config["n_lags"], config["n_forecasts"]
         )
-
         config.update({"freq": freq, "test_size": test_size})
 
         y_true, y_pred = run_and_process_results(
@@ -251,8 +251,6 @@ def run_cv(dataset, params):
         checkpoint_freq=0,
         resources_per_trial={"cpu": 6, "gpu": 0},
     )
-
-
     results = analysis.results_df[
         [col for col in analysis.results_df.columns if "config." in col]
         + ["y_true", "y_pred"]
@@ -281,10 +279,10 @@ def run_cv(dataset, params):
         dfs.append(df)
     results = pd.concat(dfs)
 
-    cv_results_with_predictions = {
-        f"results_cv_pred_{params['input']}_{method}": results
+    test_results_with_predictions = {
+        f"results_test_pred_{params['input']}_{method}": results
     }
 
-    train_fold_results = {f"train_fold_{params['input']}_{method}":train_folds_from_results}
+    train_fold_results = {f"train_fold_{params['input']}_{method}": train_folds_from_results}
 
-    return cv_results_with_predictions, train_fold_results
+    return test_results_with_predictions, train_fold_results

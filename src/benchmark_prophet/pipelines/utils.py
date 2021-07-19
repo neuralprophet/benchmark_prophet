@@ -1,8 +1,9 @@
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from neuralprophet.dataset.time_dataset import tabularize_univariate_datetime
 import numpy as np
+import pandas as pd
 from neuralprophet import NeuralProphet
-from neuralprophet import LSTM, NBeats, TFT
+from neuralprophet import LSTM, NBeats, TFT, DeepAR
 from fbprophet import Prophet
 from time import time
 from statsmodels.tsa.arima.model import ARIMA
@@ -39,6 +40,14 @@ class suppress_stdout_stderr(object):
         # Close the null files
         os.close(self.null_fds[0])
         os.close(self.null_fds[1])
+
+def _create_train(config, train_folds):
+    df_config = pd.DataFrame(config)
+    df_config = df_config.drop(['training_time', 'predicting_time'], axis = 1).drop_duplicates()
+    for col in df_config.columns:
+        train_folds[f'config.{col}'] = df_config[col].values[0]
+    return train_folds
+
 
 def _return_prediction_from_fold(forecast, vl, n_forecasts, test_size):
     forecast = vl[-test_size:].merge(forecast)
@@ -439,14 +448,18 @@ def _crossvalidation_split_df(
     return folds
 
 
-def preprocess_data(ts, params, n_lags, n_forecasts):
+def preprocess_data_cv(ts, params, n_lags, n_forecasts):
     k = params["k"]
     test_proportion = params["test_proportion"]
     fold_overlap_pct = params["fold_overlap_pct"]
     len_ts = ts.shape[0]
     test_size = int(test_proportion * len_ts)
+    method = params['method'].lower()
 
-    if params["preprocessing_type"] == "NP":
+    np_like_methods = ["np", 'lstm', 'nbeats', 'deepar', 'tft', "prophet", "arima", "sarima"]
+    sklearn_methods = ["rf", "gb", "mlp"]
+
+    if method in np_like_methods:
         train, test = _split_df(
             ts, n_lags=0, n_forecasts=n_forecasts, valid_p=test_size
         )
@@ -459,10 +472,18 @@ def preprocess_data(ts, params, n_lags, n_forecasts):
             fold_overlap_pct=fold_overlap_pct,
         )
         dataset = []
-        for tr, vl in cv:
+        train_folds = []
+        for i, (tr, vl) in enumerate(cv):
             dataset.append([tr, vl])
-    elif params["preprocessing_type"] == "tabularized":
+            tr['fold'] = i
+            tr['tr/vl'] = 'tr'
+            vl['fold'] = i
+            vl['tr/vl'] = 'vl'
+            tr = pd.concat([tr, vl])
+            train_folds.append(tr)
 
+
+    elif method in sklearn_methods:
         train, test = _split_df(ts, n_lags=0, n_forecasts=1, valid_p=test_size)
         cv = _crossvalidation_split_df(
             train,
@@ -473,9 +494,17 @@ def preprocess_data(ts, params, n_lags, n_forecasts):
             fold_overlap_pct=fold_overlap_pct,
         )
         dataset = []
-        for tr, vl in cv:
+        train_folds = []
+        for i, (tr, vl) in enumerate(cv):
             t = tr.copy()
             v = vl.copy()
+
+            tr['fold'] = i
+            tr['tr/vl'] = 'tr'
+            vl['fold'] = i
+            vl['tr/vl'] = 'vl'
+            tr = pd.concat([tr, vl])
+            train_folds.append(tr)
 
             t["t"] = t["ds"]
             t["y_scaled"] = t["y"]
@@ -498,4 +527,80 @@ def preprocess_data(ts, params, n_lags, n_forecasts):
             y_vl = y_vl[-test_size:].ravel()
 
             dataset.append([(X_tr, y_tr), (X_vl, y_vl)])
-    return dataset, test_size
+    return dataset, test_size, pd.concat(train_folds)
+
+
+
+
+def preprocess_data_test(ts, params, n_lags, n_forecasts):
+    k = params["k"]
+    test_proportion = params["test_proportion"]
+    fold_overlap_pct = params["fold_overlap_pct"]
+    len_ts = ts.shape[0]
+    test_size = int(test_proportion * len_ts)
+    method = params['method'].lower()
+
+    np_like_methods = ["np", 'lstm', 'nbeats', 'deepar', 'tft', "prophet", "arima", "sarima"]
+    sklearn_methods = ["rf", "gb", "mlp"]
+
+    if method in np_like_methods:
+        train, test = _split_df(
+            ts, n_lags=n_lags, n_forecasts=n_forecasts, valid_p=test_size
+        )
+
+        dataset = []
+        train_folds = []
+        for i in range(k):
+            tr = train.copy(deep=True)
+            vl = test.copy(deep=True)
+            dataset.append([tr, vl])
+
+            tr['fold'] = i
+            tr['tr/vl'] = 'tr'
+            vl['fold'] = i
+            vl['tr/vl'] = 'vl'
+            tr = pd.concat([tr, vl])
+            train_folds.append(tr)
+
+
+    elif method in sklearn_methods:
+        train, test = _split_df(ts, n_lags=n_lags, n_forecasts=1, valid_p=test_size)
+
+        dataset = []
+        train_folds = []
+        for i in range(k):
+            tr = train.copy(deep=True)
+            vl = test.copy(deep=True)
+
+            t = tr.copy()
+            v = vl.copy()
+
+            tr['fold'] = i
+            tr['tr/vl'] = 'tr'
+            vl['fold'] = i
+            vl['tr/vl'] = 'vl'
+            tr = pd.concat([tr, vl])
+            train_folds.append(tr)
+
+            t["t"] = t["ds"]
+            t["y_scaled"] = t["y"]
+
+            v["t"] = v["ds"]
+            v["y_scaled"] = v["y"]
+
+            X_tr = tabularize_univariate_datetime(t, n_lags=n_lags, n_forecasts=1)[0][
+                "lags"
+            ]
+            y_tr = tabularize_univariate_datetime(t, n_lags=n_lags, n_forecasts=1)[1]
+            X_vl = tabularize_univariate_datetime(v, n_lags=n_lags, n_forecasts=1)[0][
+                "lags"
+            ]
+            y_vl = tabularize_univariate_datetime(v, n_lags=n_lags, n_forecasts=1)[1]
+
+            X_tr = np.vstack([X_tr, X_vl[:-test_size]])
+            X_vl = X_vl[-test_size:]
+            y_tr = np.vstack([y_tr, y_vl[:-test_size]]).ravel()
+            y_vl = y_vl[-test_size:].ravel()
+
+            dataset.append([(X_tr, y_tr), (X_vl, y_vl)])
+    return dataset, test_size, pd.concat(train_folds)

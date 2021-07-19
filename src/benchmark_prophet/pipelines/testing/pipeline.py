@@ -1,5 +1,5 @@
 from kedro.pipeline import node, Pipeline
-from benchmark_prophet.pipelines.cross_validation.nodes import load_data, run_cv
+from benchmark_prophet.pipelines.testing.nodes import load_data, run_testing
 
 
 def create_pipeline(**kwargs):
@@ -12,10 +12,10 @@ def create_pipeline(**kwargs):
                 name="load_data",
             ),
             node(
-                func=run_cv,
+                func=run_testing,
                 inputs=["dataset", "parameters"],
-                outputs=['results_cv_with_predictions_refactored', 'train_fold_results'],
-                name="run_cv",
+                outputs=['results_test_with_predictions_refactored', 'train_fold_results_test'],
+                name="run_testing",
             ),
         ]
     )

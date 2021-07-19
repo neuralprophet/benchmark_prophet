@@ -36,7 +36,9 @@ from kedro.pipeline import Pipeline
 from kedro.versioning import Journal
 from benchmark_prophet.pipelines.data_preprocessing import pipeline as dp
 from benchmark_prophet.pipelines.cross_validation import pipeline as cv
-# from benchmark_prophet.pipelines.testing import pipeline as test
+from benchmark_prophet.pipelines.testing import pipeline as test
+from benchmark_prophet.pipelines.metrics_calculation_cv import pipeline as metrics_cv
+from benchmark_prophet.pipelines.metrics_calculation_test import pipeline as metrics_test
 from benchmark_prophet.io.datasets.ts_dataset import TimeSeriesDataSet
 
 import warnings
@@ -100,15 +102,19 @@ class ProjectHooks:
         """
         dp_pipeline = dp.create_pipeline()
         cv_pipeline = cv.create_pipeline()
-        # test_pipeline = test.create_pipeline()
+        test_pipeline = test.create_pipeline()
+        metrics_cv_pipeline = metrics_cv.create_pipeline()
+        metrics_test_pipeline = metrics_test.create_pipeline()
 
 
         return {
             "dp": dp_pipeline,
             "cv": cv_pipeline,
+            "test": test_pipeline,
+            "evaluate_cv": metrics_cv_pipeline,
+            "evaluate_test":metrics_test_pipeline,
             # "test": test_pipeline,
-            "__default__": dp_pipeline
-            + cv_pipeline
+            "__default__": cv_pipeline + test_pipeline + metrics_cv_pipeline + metrics_test_pipeline
             # + test_pipeline
         }
 

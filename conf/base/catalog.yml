@@ -48,28 +48,53 @@ results_cv_with_predictions_refactored:
   path: data/04_cv/
   filename_suffix: ".csv"
 
-results_cv_vanilla:
+
+
+results_test_with_predictions_refactored:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
     save_args:
       index: False
-  path: data/03_cv_vanilla/
+  path: data/05_test/
   filename_suffix: ".csv"
 
+train_fold_results:
+    type: PartitionedDataSet
+    dataset:
+      type: pandas.CSVDataSet
+      save_args:
+        index: False
+    path: data/04_train_folds/
+    filename_suffix: ".csv"
 
-results_cv_vanilla_with_predictions:
+train_fold_results_test:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
     save_args:
       index: False
-  path: data/03_cv_vanilla/
+  path: data/05_train_folds/
+  filename_suffix: ".csv"
+
+metrics_df_test:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/06_metrics_test/
   filename_suffix: ".csv"
 
 
-
-
+metrics_df_cv:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    save_args:
+      index: False
+  path: data/06_metrics_cv/
+  filename_suffix: ".csv"
 
 results_test:
   type: PartitionedDataSet
