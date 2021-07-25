@@ -3,10 +3,14 @@ import numpy as np
 # from benchmark_prophet.pipelines.utils import
 
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from sktime.performance_metrics.forecasting import median_absolute_percentage_error, mean_absolute_scaled_error
+from sktime.performance_metrics.forecasting import median_absolute_percentage_error, mean_absolute_scaled_error, MeanSquaredScaledError
 
 import re
+def smape(a, f):
+    return 1/len(a) * np.sum(2 * np.abs(f-a) / (np.abs(a) + np.abs(f))*100)
 
+def wape(a, f):
+    return np.sum(np.abs(a-f))/np.sum(a)
 
 def calculate_metrics(results_cv_with_predictions_refactored, train_fold_results, params):
     method = params['method']
@@ -36,7 +40,7 @@ def calculate_metrics(results_cv_with_predictions_refactored, train_fold_results
         metrices_ts = []
         for row_n, config in configurations.iterrows():
             metrics_df = pd.DataFrame()
-            n_forecasts = config.to_dict()['config.n_forecasts']
+            n_forecasts = int(config.to_dict()['config.n_forecasts'])
             part = pd.DataFrame(config.to_dict(), index=[0]).merge(df_ts, on=cols_config, how='left')
             part_train = pd.DataFrame(config.to_dict(), index=[0]).merge(train_ts, on=cols_config, how='left')
             folds = part['fold'].unique()
@@ -63,9 +67,38 @@ def calculate_metrics(results_cv_with_predictions_refactored, train_fold_results
                                    f'MASE_forecast_{frcst}'] = mean_absolute_scaled_error(y_true=y_true,
                                                                                           y_pred=y_pred,
                                                                                           y_train=y_train)
+                    try:
+                        metrics_df.loc[metrics_df['fold'] == fold,
+                                       f'MAPE_forecast_{frcst}'] = median_absolute_percentage_error(y_true=y_true,
+                                                                                                    y_pred=y_pred)
+                    except:
+                        metrics_df.loc[metrics_df['fold'] == fold,
+                                       f'MAPE_forecast_{frcst}'] = None
+
+                    msse = MeanSquaredScaledError()
                     metrics_df.loc[metrics_df['fold'] == fold,
-                                   f'MAPE_forecast_{frcst}'] = median_absolute_percentage_error(y_true=y_true,
-                                                                                                y_pred=y_pred)
+                                   f'MSSE_forecast_{frcst}'] = msse(y_true=y_true,
+                                                                    y_pred=y_pred,
+                                                                    y_train=y_train)
+
+
+                    try:
+                        metrics_df.loc[metrics_df['fold'] == fold,
+                                       f'SMAPE_forecast_{frcst}'] = smape(y_true, y_pred)
+                    except:
+                        metrics_df.loc[metrics_df['fold'] == fold,
+                                       f'SMAPE_forecast_{frcst}'] = None
+
+                    try:
+                        metrics_df.loc[metrics_df['fold'] == fold,
+                                       f'WAPE_forecast_{frcst}'] = wape(y_true, y_pred)
+                    except:
+                        metrics_df.loc[metrics_df['fold'] == fold,
+                                       f'WAPE_forecast_{frcst}'] = None
+
+
+
+
             metrices_ts.append(metrics_df)
         metrices.append(pd.concat(metrices_ts))
 

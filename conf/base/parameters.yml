@@ -820,7 +820,7 @@ TFTParameterList:
 - epochs
 - attention_head_size
 - hidden_continuous_size
-- rnn_layers
+- hidden_size
 TrafficBrazil:
   freq: 30min
   n_forecasts:
@@ -866,7 +866,7 @@ exchange_rate:
 exchange_rate_nips:
   freq: B
   nan_interpolation: linear
-fold_overlap_pct: 0.1
+fold_overlap_pct: 0.5
 hidden_continuous_size:
 - 8
 hidden_size:
@@ -908,12 +908,12 @@ m4_weekly:
   nan_interpolation: linear
 ma:
 - 3
-method: RF
+method: TFT
 methods_to_include:
 - naive
 - arima
 n_forecasts:
-- 1
+#- 1
 - 5
 n_lags:
 - 12
@@ -947,7 +947,7 @@ solar_nips:
 test:
   freq: H
   nan_interpolation: linear
-test_proportion: 0.05
+test_proportion: 0.1
 tourism_monthly:
   freq: M
   nan_interpolation: linear

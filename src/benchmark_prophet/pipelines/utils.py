@@ -52,6 +52,7 @@ def _create_train(config, train_folds):
 def _return_prediction_from_fold(forecast, vl, n_forecasts, test_size):
     forecast = vl[-test_size:].merge(forecast)
     forecast = forecast.set_index("ds")[[f"yhat{i}" for i in range(1, n_forecasts + 1)]]
+
     y_pred_rolled = [
         np.array(forecast).diagonal(offset=-i)
         for i in range(test_size - n_forecasts + 1)
@@ -461,7 +462,7 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
 
     if method in np_like_methods:
         train, test = _split_df(
-            ts, n_lags=0, n_forecasts=n_forecasts, valid_p=test_size
+            ts, n_lags=n_lags, n_forecasts=n_forecasts, valid_p=test_size
         )
         cv = _crossvalidation_split_df(
             train,

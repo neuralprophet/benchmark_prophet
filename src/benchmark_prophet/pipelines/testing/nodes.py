@@ -12,7 +12,8 @@ from benchmark_prophet.pipelines.utils import (
     _train_predict_prophet,
     _train_predict_lstm,
     _train_predict_nbeats,
-    _train_predict_deepar
+    _train_predict_deepar,
+    _train_predict_tft
 )
 from ray import tune
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
