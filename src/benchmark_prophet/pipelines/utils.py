@@ -11,6 +11,7 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 import os
 from copy import copy
 
+
 class suppress_stdout_stderr(object):
     """
     A context manager for doing a "deep suppression" of stdout and stderr in
@@ -41,11 +42,14 @@ class suppress_stdout_stderr(object):
         os.close(self.null_fds[0])
         os.close(self.null_fds[1])
 
+
 def _create_train(config, train_folds):
     df_config = pd.DataFrame(config)
-    df_config = df_config.drop(['training_time', 'predicting_time'], axis = 1).drop_duplicates()
+    df_config = df_config.drop(
+        ["training_time", "predicting_time"], axis=1
+    ).drop_duplicates()
     for col in df_config.columns:
-        train_folds[f'config.{col}'] = df_config[col].values[0]
+        train_folds[f"config.{col}"] = df_config[col].values[0]
     return train_folds
 
 
@@ -138,10 +142,7 @@ def _train_predict_nbeats(tr, vl, model_parameters, freq, test_size):
     )
     return (
         (y_rolled, y_pred_rolled),
-        {
-            "training_time": [training_time],
-            "predicting_time": [predicting_time],
-        },
+        {"training_time": [training_time], "predicting_time": [predicting_time],},
     )
 
 
@@ -161,11 +162,9 @@ def _train_predict_deepar(tr, vl, model_parameters, freq, test_size):
     )
     return (
         (y_rolled, y_pred_rolled),
-        {
-            "training_time": [training_time],
-            "predicting_time": [predicting_time],
-        },
+        {"training_time": [training_time], "predicting_time": [predicting_time],},
     )
+
 
 def _train_predict_tft(tr, vl, model_parameters, freq, test_size):
     t1 = time()
@@ -183,11 +182,9 @@ def _train_predict_tft(tr, vl, model_parameters, freq, test_size):
     )
     return (
         (y_rolled, y_pred_rolled),
-        {
-            "training_time": [training_time],
-            "predicting_time": [predicting_time],
-        },
+        {"training_time": [training_time], "predicting_time": [predicting_time],},
     )
+
 
 #
 # def _train_predict_np(tr, vl, model_parameters, freq, test_size):
@@ -217,6 +214,7 @@ def _train_predict_tft(tr, vl, model_parameters, freq, test_size):
 #         },
 #     )
 
+
 def _train_predict_sklearn(tr, vl, reg, n_forecasts):
     X_tr, y_tr = tr
     X_vl, y_vl = vl
@@ -231,19 +229,17 @@ def _train_predict_sklearn(tr, vl, reg, n_forecasts):
     predicting_time = t2 - t1
 
     y_rolled = np.array(
-        [y_vl[i: i + n_forecasts] for i in range(len(y_vl) - n_forecasts + 1)]
+        [y_vl[i : i + n_forecasts] for i in range(len(y_vl) - n_forecasts + 1)]
     )
     return (
         (y_rolled, y_pred_rf),
-        {
-            "training_time": [training_time],
-            "predicting_time": [predicting_time],
-        },
+        {"training_time": [training_time], "predicting_time": [predicting_time],},
     )
+
 
 def _train_predict_arima(tr, vl, model_parameters, test_size, n_forecasts):
     tr_arima = tr.append(
-        vl.iloc[vl[vl.ds == tr.ds.iloc[-1]].index.values[0] + 1: -test_size]
+        vl.iloc[vl[vl.ds == tr.ds.iloc[-1]].index.values[0] + 1 : -test_size]
     ).reset_index(drop=True)
     vl_arima = vl.iloc[-test_size:].reset_index(drop=True)
     tr_arima = tr_arima.drop("ds", axis=1)
@@ -251,7 +247,7 @@ def _train_predict_arima(tr, vl, model_parameters, test_size, n_forecasts):
     vl_arima.index = range(len(tr_arima), len(tr_arima) + len(vl_arima))
     tr_arima = tr_arima.iloc[-1000:]
     t1 = time()
-    model_parameters.update({'endog':tr_arima})
+    model_parameters.update({"endog": tr_arima})
     model = ARIMA(**model_parameters)
     model_arima = model.fit()
     t2 = time()
@@ -261,7 +257,7 @@ def _train_predict_arima(tr, vl, model_parameters, test_size, n_forecasts):
     y_pred_rolled = []
     y_pred_rolled.append(model_arima_copy.forecast(steps=n_forecasts).values)
     for i in range(len(vl_arima) - n_forecasts):
-        model_arima_copy = model_arima_copy.append(vl_arima.iloc[i: i + 1])
+        model_arima_copy = model_arima_copy.append(vl_arima.iloc[i : i + 1])
         y_pred_rolled.append(
             np.array(model_arima_copy.forecast(steps=n_forecasts).values)
         )
@@ -269,16 +265,14 @@ def _train_predict_arima(tr, vl, model_parameters, test_size, n_forecasts):
     predicting_time = t2 - t1
 
     y = np.array(vl[-test_size:]["y"])
-    y_rolled = [y[i: i + n_forecasts] for i in range(len(y) - n_forecasts + 1)]
+    y_rolled = [y[i : i + n_forecasts] for i in range(len(y) - n_forecasts + 1)]
     y_pred_arima = np.array(y_pred_rolled)
 
     return (
         (y_rolled, y_pred_arima),
-        {
-            "training_time": [training_time],
-            "predicting_time": [predicting_time],
-        },
+        {"training_time": [training_time], "predicting_time": [predicting_time],},
     )
+
 
 def _train_predict_prophet(tr, vl, model_parameters, test_size, freq):
     model_parameters
@@ -300,16 +294,13 @@ def _train_predict_prophet(tr, vl, model_parameters, test_size, freq):
 
     return (
         (y_true, y_pred_prophet),
-        {
-            "training_time": [training_time],
-            "predicting_time": [predicting_time],
-        },
+        {"training_time": [training_time], "predicting_time": [predicting_time],},
     )
 
 
 def _train_predict_sarima(tr, vl, model_parameters, test_size, n_forecasts):
     tr_arima = tr.append(
-        vl.iloc[vl[vl.ds == tr.ds.iloc[-1]].index.values[0] + 1: -test_size]
+        vl.iloc[vl[vl.ds == tr.ds.iloc[-1]].index.values[0] + 1 : -test_size]
     ).reset_index(drop=True)
     vl_arima = vl.iloc[-test_size:].reset_index(drop=True)
     tr_arima = tr_arima.drop("ds", axis=1)
@@ -318,7 +309,7 @@ def _train_predict_sarima(tr, vl, model_parameters, test_size, n_forecasts):
     tr_arima = tr_arima.iloc[-1000:]
     t1 = time()
 
-    model_parameters.update({'endog': tr_arima})
+    model_parameters.update({"endog": tr_arima})
     model = SARIMAX(**model_parameters)
     model_sarima = model.fit()
     t2 = time()
@@ -328,7 +319,7 @@ def _train_predict_sarima(tr, vl, model_parameters, test_size, n_forecasts):
     y_pred_rolled = []
     y_pred_rolled.append(model_sarima_copy.forecast(steps=n_forecasts).values)
     for i in range(len(vl_arima) - n_forecasts):
-        model_sarima_copy = model_sarima_copy.append(vl_arima.iloc[i: i + 1])
+        model_sarima_copy = model_sarima_copy.append(vl_arima.iloc[i : i + 1])
         y_pred_rolled.append(
             np.array(model_sarima_copy.forecast(steps=n_forecasts).values)
         )
@@ -336,15 +327,12 @@ def _train_predict_sarima(tr, vl, model_parameters, test_size, n_forecasts):
     t2 = time()
     predicting_time = t2 - t1
     y = np.array(vl[-test_size:]["y"])
-    y_rolled = [y[i: i + n_forecasts] for i in range(len(y) - n_forecasts + 1)]
+    y_rolled = [y[i : i + n_forecasts] for i in range(len(y) - n_forecasts + 1)]
     y_pred_sarima = np.array(y_pred_rolled)
 
     return (
         (y_rolled, y_pred_sarima),
-        {
-            "training_time": [training_time],
-            "predicting_time": [predicting_time],
-        },
+        {"training_time": [training_time], "predicting_time": [predicting_time],},
     )
 
 
@@ -357,6 +345,7 @@ def _prediction_vanilla(reg, X_vl, y_vl, n_forecasts):
         X_test = X_test[:, 1:]
         X_test = np.hstack([X_test, prediction.reshape(-1, 1)])
     return np.hstack(predictions)
+
 
 def r2_mse_var(y_true, y_pred, var):
     return 1 - (mean_squared_error(y_true, y_pred) / var)
@@ -455,9 +444,18 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
     fold_overlap_pct = params["fold_overlap_pct"]
     len_ts = ts.shape[0]
     test_size = int(test_proportion * len_ts)
-    method = params['method'].lower()
+    method = params["method"].lower()
 
-    np_like_methods = ["np", 'lstm', 'nbeats', 'deepar', 'tft', "prophet", "arima", "sarima"]
+    np_like_methods = [
+        "np",
+        "lstm",
+        "nbeats",
+        "deepar",
+        "tft",
+        "prophet",
+        "arima",
+        "sarima",
+    ]
     sklearn_methods = ["rf", "gb", "mlp"]
 
     if method in np_like_methods:
@@ -475,14 +473,13 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
         dataset = []
         train_folds = []
         for i, (tr, vl) in enumerate(cv):
-            dataset.append([tr, vl])
-            tr['fold'] = i
-            tr['tr/vl'] = 'tr'
-            vl['fold'] = i
-            vl['tr/vl'] = 'vl'
+            dataset.append([tr.copy(deep=True), vl.copy(deep=True)])
+            tr["fold"] = i
+            tr["tr/vl"] = "tr"
+            vl["fold"] = i
+            vl["tr/vl"] = "vl"
             tr = pd.concat([tr, vl])
             train_folds.append(tr)
-
 
     elif method in sklearn_methods:
         train, test = _split_df(ts, n_lags=0, n_forecasts=1, valid_p=test_size)
@@ -500,10 +497,10 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
             t = tr.copy()
             v = vl.copy()
 
-            tr['fold'] = i
-            tr['tr/vl'] = 'tr'
-            vl['fold'] = i
-            vl['tr/vl'] = 'vl'
+            tr["fold"] = i
+            tr["tr/vl"] = "tr"
+            vl["fold"] = i
+            vl["tr/vl"] = "vl"
             tr = pd.concat([tr, vl])
             train_folds.append(tr)
 
@@ -531,17 +528,24 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
     return dataset, test_size, pd.concat(train_folds)
 
 
-
-
 def preprocess_data_test(ts, params, n_lags, n_forecasts):
     k = params["k"]
     test_proportion = params["test_proportion"]
     fold_overlap_pct = params["fold_overlap_pct"]
     len_ts = ts.shape[0]
     test_size = int(test_proportion * len_ts)
-    method = params['method'].lower()
+    method = params["method"].lower()
 
-    np_like_methods = ["np", 'lstm', 'nbeats', 'deepar', 'tft', "prophet", "arima", "sarima"]
+    np_like_methods = [
+        "np",
+        "lstm",
+        "nbeats",
+        "deepar",
+        "tft",
+        "prophet",
+        "arima",
+        "sarima",
+    ]
     sklearn_methods = ["rf", "gb", "mlp"]
 
     if method in np_like_methods:
@@ -554,15 +558,14 @@ def preprocess_data_test(ts, params, n_lags, n_forecasts):
         for i in range(k):
             tr = train.copy(deep=True)
             vl = test.copy(deep=True)
-            dataset.append([tr, vl])
+            dataset.append([tr.copy(deep=True), vl.copy(deep=True)])
 
-            tr['fold'] = i
-            tr['tr/vl'] = 'tr'
-            vl['fold'] = i
-            vl['tr/vl'] = 'vl'
+            tr["fold"] = i
+            tr["tr/vl"] = "tr"
+            vl["fold"] = i
+            vl["tr/vl"] = "vl"
             tr = pd.concat([tr, vl])
             train_folds.append(tr)
-
 
     elif method in sklearn_methods:
         train, test = _split_df(ts, n_lags=n_lags, n_forecasts=1, valid_p=test_size)
@@ -576,10 +579,10 @@ def preprocess_data_test(ts, params, n_lags, n_forecasts):
             t = tr.copy()
             v = vl.copy()
 
-            tr['fold'] = i
-            tr['tr/vl'] = 'tr'
-            vl['fold'] = i
-            vl['tr/vl'] = 'vl'
+            tr["fold"] = i
+            tr["tr/vl"] = "tr"
+            vl["fold"] = i
+            vl["tr/vl"] = "vl"
             tr = pd.concat([tr, vl])
             train_folds.append(tr)
 
