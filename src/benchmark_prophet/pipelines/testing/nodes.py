@@ -185,8 +185,6 @@ def run_and_process_results(cv_dataset, model_parameters_list, config):
 
 
 def run_testing(dataset, params):
-    use_exact_values = int(params["use_exact_values"])
-
     method = params["method"]
 
     if params["method"].lower() == "np":

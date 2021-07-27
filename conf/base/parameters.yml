@@ -1,3 +1,150 @@
+ArimaParameterList:
+- n_lags
+- n_forecasts
+- ma
+- i
+
+DeepARParameterList:
+- n_lags
+- n_forecasts
+- epochs
+- learning_rate
+- hidden_size
+- rnn_layers
+
+LSTMParameterList:
+- n_lags
+- n_forecasts
+- num_hidden_layers
+- d_hidden
+- learning_rate
+- epochs
+
+
+NBeatsParameterList:
+- n_lags
+- n_forecasts
+- epochs
+- learning_rate
+
+NPParameterList:
+- n_lags
+- n_forecasts
+- learning_rate
+- num_hidden_layers
+- d_hidden
+#- growth
+#- changepoints
+#- n_changepoints
+#- changepoints_range
+#- trend_reg
+#- trend_reg_threshold
+#- yearly_seasonality
+#- weekly_seasonality
+#- daily_seasonality
+#- seasonality_mode
+#- seasonality_reg
+#- ar_sparsity
+- learning_rate
+- epochs
+#- batch_size
+#- loss_func
+#- train_speed
+#- normalize
+#- impute_missing
+
+SarimaParameterList:
+- n_lags
+- n_forecasts
+- ma
+- i
+- seasonal
+
+SklearnParameterList:
+- random_state
+- n_lags
+- n_forecasts
+
+TFTParameterList:
+- n_lags
+- n_forecasts
+- epochs
+- attention_head_size
+- hidden_continuous_size
+- hidden_size
+
+ProphetParameterList:
+- n_forecasts
+- n_lags
+
+attention_head_size:
+- 1
+- 8
+d_hidden:
+- 8
+- 16
+epochs:
+- 10
+- 40
+- 100
+
+fold_overlap_pct: 0.05
+
+hidden_continuous_size:
+- 8
+
+hidden_size:
+- 8
+- 16
+
+i:
+- 1
+
+k: 5
+
+learning_rate:
+- 0.001
+- 0.01
+- 0.1
+
+ma:
+- 3
+
+method: NP
+
+n_forecasts:
+- 1
+- 6
+- 24
+
+n_lags:
+- 12
+- 24
+- 72
+
+num_hidden_layers:
+- 1
+- 4
+
+#parameter_list: DeepARParameterList
+
+#preprocessing_type: NP
+
+random_state:
+- 42
+
+rnn_layers:
+- 2
+
+seasonal:
+- 24
+
+test_proportion: 0.05
+
+
+
+
+
 AirQualityUCI:
   freq: H
   n_forecasts:
@@ -11,11 +158,6 @@ AirQualityUCI:
   - 24
   - 96
   nan_interpolation: linear
-ArimaParameterList:
-- n_lags
-- n_forecasts
-- ma
-- i
 BeijingPM25:
   freq: H
   n_forecasts:
@@ -42,13 +184,6 @@ DailyDemandForecastingOrders:
   - 21
   - 60
   nan_interpolation: zero
-DeepARParameterList:
-- n_lags
-- n_forecasts
-- epochs
-- learning_rate
-- hidden_size
-- rnn_layers
 ERCOTDAM:
   freq: H
   n_forecasts:
@@ -140,13 +275,6 @@ FiveCitiesPMData_Shenyang:
   - 24
   - 96
   nan_interpolation: linear
-LSTMParameterList:
-- n_lags
-- n_forecasts
-- num_hidden_layers
-- d_hidden
-- learning_rate
-- epochs
 LondonDataStore:
   freq: D
   n_forecasts:
@@ -173,61 +301,6 @@ MetroInterstateTrafficVolume:
   - 24
   - 96
   nan_interpolation: linear
-Models:
-- n_lags: 0
-- n_lags: 2
-  num_hidden_layers: 0
-- d_hidden: 32
-  n_lags: 2
-  num_hidden_layers: 1
-- d_hidden: 32
-  n_lags: 2
-  num_hidden_layers: 4
-- n_lags: 4
-  num_hidden_layers: 0
-- d_hidden: 32
-  n_lags: 4
-  num_hidden_layers: 1
-- d_hidden: 32
-  n_lags: 4
-  num_hidden_layers: 4
-NBeatsParameterList:
-- n_lags
-- n_forecasts
-- epochs
-- learning_rate
-NPParameterList:
-- n_lags
-- n_forecasts
-- null
-NeuralProphetParamsList:
-- n_forecasts
-- n_lags
-- num_hidden_layers
-- d_hidden
-- growth
-- changepoints
-- n_changepoints
-- changepoints_range
-- trend_reg
-- trend_reg_threshold
-- yearly_seasonality
-- weekly_seasonality
-- daily_seasonality
-- seasonality_mode
-- seasonality_reg
-- ar_sparsity
-- learning_rate
-- epochs
-- batch_size
-- loss_func
-- train_speed
-- normalize
-- impute_missing
-- early_stopping
-- min_delta
-- patience_p
-- range_epochs_early_stopping
 PRSA_Aotizhongxin:
   freq: H
   n_forecasts:
@@ -774,9 +847,6 @@ Parking_Birmingham_Shopping:
   - 48
   - 96
   nan_interpolation: zero
-ProphetParameterList:
-- n_forecasts
-- n_lags
 RTEConsumption:
   freq: H
   n_forecasts:
@@ -803,24 +873,6 @@ RaleighPV:
   - 24
   - 96
   nan_interpolation: linear
-SarimaParameterList:
-- n_lags
-- n_forecasts
-- ma
-- i
-- seasonal
-SklearnParameterList:
-- random_state
-- n_lags
-- n_forecasts
-- null
-TFTParameterList:
-- n_lags
-- n_forecasts
-- epochs
-- attention_head_size
-- hidden_continuous_size
-- hidden_size
 TrafficBrazil:
   freq: 30min
   n_forecasts:
@@ -834,48 +886,22 @@ TrafficBrazil:
   - 48
   - 96
   nan_interpolation: zero
-VanillaParamsList:
-- n_lags
-- n_forecasts
-- growth
-- changepoints
-- n_changepoints
-- changepoint_range
-- yearly_seasonality
-- weekly_seasonality
-- daily_seasonality
-- seasonality_mode
-attention_head_size:
-- 1
+
 constant:
   freq: 1H
   nan_interpolation: linear
-d_hidden:
-- 8
 electricity:
   freq: 1H
   nan_interpolation: linear
 electricity_nips:
   freq: H
   nan_interpolation: linear
-epochs:
-- 10
 exchange_rate:
   freq: 1B
   nan_interpolation: linear
 exchange_rate_nips:
   freq: B
   nan_interpolation: linear
-fold_overlap_pct: 0.5
-hidden_continuous_size:
-- 8
-hidden_size:
-- 8
-i:
-- 1
-k: 5
-learning_rate:
-- 0.001
 m1_monthly:
   freq: M
   nan_interpolation: linear
@@ -906,18 +932,6 @@ m4_hourly:
 m4_weekly:
   freq: W
   nan_interpolation: linear
-ma:
-- 3
-method: TFT
-methods_to_include:
-- naive
-- arima
-n_forecasts:
-#- 1
-- 5
-n_lags:
-- 12
-- 24
 nn5_daily_with_missing:
   freq: D
   nan_interpolation: linear
@@ -927,17 +941,6 @@ nn5_daily_without_missing:
 nn5_weekly:
   freq: W
   nan_interpolation: linear
-num_hidden_layers:
-- 1
-parameter_list: DeepARParameterList
-preprocessing_type: NP
-random_state:
-- 42
-rnn_layers:
-- 2
-save_predictions: 1
-seasonal:
-- 24
 solar-energy:
   freq: 1H
   nan_interpolation: linear
@@ -947,7 +950,6 @@ solar_nips:
 test:
   freq: H
   nan_interpolation: linear
-test_proportion: 0.1
 tourism_monthly:
   freq: M
   nan_interpolation: linear
@@ -963,4 +965,3 @@ traffic:
 traffic_nips:
   freq: H
   nan_interpolation: linear
-use_exact_values: 1
