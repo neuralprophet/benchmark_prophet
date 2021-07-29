@@ -226,7 +226,7 @@ def run_testing(dataset, params):
     variable_params = {
         k: tune.grid_search(model_parameters[k])
         for k in model_parameters.keys()
-        if k != n_forecasts
+        if k != 'n_forecasts'
     }
     variable_params.update({"n_forecasts": list_n_forecasts})
     variable_params.update({"time_series": time_series_list})
