@@ -13,7 +13,7 @@ from benchmark_prophet.pipelines.utils import (
     _train_predict_lstm,
     _train_predict_nbeats,
     _train_predict_deepar,
-    _train_predict_tft
+    _train_predict_tft,
 )
 from ray import tune
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -23,17 +23,13 @@ import re
 
 def load_data(preprocessed_time_series, params):
 
-    particular_time_series = params["input"].split('_')[-1].isnumeric()
+    particular_time_series = params["input"].split("_")[-1].isnumeric()
     if particular_time_series:
         pattern = re.compile(fr'^{params["input"]}')
     else:
         pattern = re.compile(fr'^{params["input"]}_\d')
 
-    time_series_list = [
-        i
-        for i in preprocessed_time_series.keys()
-        if pattern.match(i)
-    ]
+    time_series_list = [i for i in preprocessed_time_series.keys() if pattern.match(i)]
     dataset = {}
     for ts in time_series_list:
         one_time_series = preprocessed_time_series[ts]().drop_duplicates()
@@ -52,25 +48,25 @@ def model_cv_run(tr, vl, model_parameters_list, config):
         )
         return (y_rolled, y_pred_rolled), additional_info
 
-    elif config["method"].lower() == 'lstm':
+    elif config["method"].lower() == "lstm":
         (y_rolled, y_pred_rolled), additional_info = _train_predict_lstm(
             tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
-    elif config["method"].lower() == 'nbeats':
+    elif config["method"].lower() == "nbeats":
         (y_rolled, y_pred_rolled), additional_info = _train_predict_nbeats(
             tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
-    elif config["method"].lower() == 'deepar':
+    elif config["method"].lower() == "deepar":
         (y_rolled, y_pred_rolled), additional_info = _train_predict_deepar(
             tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
-    elif config["method"].lower() == 'tft':
+    elif config["method"].lower() == "tft":
         (y_rolled, y_pred_rolled), additional_info = _train_predict_tft(
             tr, vl, model_parameters, config["freq"], config["val_size"]
         )
@@ -187,23 +183,23 @@ def run_cv(dataset, params):
     method = params["method"]
 
     if params["method"].lower() == "np":
-        parameter_list = 'NPParameterList'
-    elif params["method"].lower() == 'lstm':
-        parameter_list = 'LSTMParameterList'
-    elif params["method"].lower() == 'nbeats':
-        parameter_list = 'NBeatsParameterList'
-    elif params["method"].lower() == 'deepar':
-        parameter_list = 'DeepARParameterList'
-    elif params["method"].lower() == 'tft':
-        parameter_list = 'TFTParameterList'
+        parameter_list = "NPParameterList"
+    elif params["method"].lower() == "lstm":
+        parameter_list = "LSTMParameterList"
+    elif params["method"].lower() == "nbeats":
+        parameter_list = "NBeatsParameterList"
+    elif params["method"].lower() == "deepar":
+        parameter_list = "DeepARParameterList"
+    elif params["method"].lower() == "tft":
+        parameter_list = "TFTParameterList"
     elif params["method"].lower() == "prophet":
-        parameter_list = 'ProphetParameterList'
+        parameter_list = "ProphetParameterList"
     elif params["method"].lower() in ["rf", "gb", "mlp"]:
-        parameter_list = 'SklearnParameterList'
+        parameter_list = "SklearnParameterList"
     elif params["method"].lower() == "arima":
-        parameter_list = 'ArimaParameterList'
+        parameter_list = "ArimaParameterList"
     elif params["method"].lower() == "sarima":
-        parameter_list = 'SarimaParameterList'
+        parameter_list = "SarimaParameterList"
 
     model_parameters_list = params[parameter_list]
     model_parameters = {
@@ -214,13 +210,20 @@ def run_cv(dataset, params):
         model_parameters.update({"n_forecasts": list([1])})
     time_series_list = tune.grid_search(list(dataset.keys()))
 
-    if type(params['n_forecasts']) == list and len(params['n_forecasts']) > 1:
-        print('n forecasts should be fixed')
+    if type(params["n_forecasts"]) == list and len(params["n_forecasts"]) > 1:
+        print("n forecasts should be fixed")
         exit()
+    elif type(params["n_forecasts"]) == list and len(params["n_forecasts"]) == 1:
+        pass
+    elif type(params["n_forecasts"]) != list:
+        list_n_forecasts = [params["n_forecasts"]]
 
     variable_params = {
-        k: tune.grid_search(model_parameters[k]) for k in model_parameters.keys()
+        k: tune.grid_search(model_parameters[k])
+        for k in model_parameters.keys()
+        if k != n_forecasts
     }
+    variable_params.update({"n_forecasts": list_n_forecasts})
     variable_params.update({"time_series": time_series_list})
 
     def train(config):
@@ -232,18 +235,14 @@ def run_cv(dataset, params):
             ts, params, config["n_lags"], config["n_forecasts"]
         )
 
-        config.update({"freq": freq, "test_size": test_size, "val_size":val_size})
+        config.update({"freq": freq, "test_size": test_size, "val_size": val_size})
 
         y_true, y_pred = run_and_process_results(
             cv_dataset, model_parameters_list, config
         )
         train_folds = _create_train(config, train_folds)
 
-        return {
-            "y_true": y_true,
-            "y_pred": y_pred,
-            "train_folds": train_folds
-        }
+        return {"y_true": y_true, "y_pred": y_pred, "train_folds": train_folds}
 
     analysis = tune.run(
         train,
@@ -255,13 +254,12 @@ def run_cv(dataset, params):
         resources_per_trial={"cpu": 6, "gpu": 0},
     )
 
-
     results = analysis.results_df[
         [col for col in analysis.results_df.columns if "config." in col]
         + ["y_true", "y_pred"]
     ].reset_index(drop=True)
 
-    train_folds_from_results = analysis.results_df['train_folds'].reset_index(drop=True)
+    train_folds_from_results = analysis.results_df["train_folds"].reset_index(drop=True)
     train_fold = []
     for row in range(len(train_folds_from_results)):
         train_fold.append(train_folds_from_results.iloc[row])
@@ -288,6 +286,8 @@ def run_cv(dataset, params):
         f"results_cv_pred_{params['input']}_{method}_horizon_{params['n_forecasts']}": results
     }
 
-    train_fold_results = {f"train_fold_{params['input']}_{method}_horizon_{params['n_forecasts']}":train_folds_from_results}
+    train_fold_results = {
+        f"train_fold_{params['input']}_{method}_horizon_{params['n_forecasts']}": train_folds_from_results
+    }
 
     return cv_results_with_predictions, train_fold_results

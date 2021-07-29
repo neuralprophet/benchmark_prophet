@@ -215,13 +215,20 @@ def run_testing(dataset, params):
         model_parameters.update({"n_forecasts": list([1])})
     time_series_list = tune.grid_search(list(dataset.keys()))
 
-    if type(params['n_forecasts']) == list and len(params['n_forecasts']) > 1:
-        print('n forecasts should be fixed')
+    if type(params["n_forecasts"]) == list and len(params["n_forecasts"]) > 1:
+        print("n forecasts should be fixed")
         exit()
+    elif type(params["n_forecasts"]) == list and len(params["n_forecasts"]) == 1:
+        pass
+    elif type(params["n_forecasts"]) != list:
+        list_n_forecasts = [params["n_forecasts"]]
 
     variable_params = {
-        k: tune.grid_search(model_parameters[k]) for k in model_parameters.keys()
+        k: tune.grid_search(model_parameters[k])
+        for k in model_parameters.keys()
+        if k != n_forecasts
     }
+    variable_params.update({"n_forecasts": list_n_forecasts})
     variable_params.update({"time_series": time_series_list})
 
     def train(config):
