@@ -30,6 +30,13 @@ def calculate_metrics(results_cv_with_predictions_refactored, train_fold_results
     cols_config.remove('config.predicting_time')
     cols_config.remove('config.freq')
     cols_config.remove('config.test_size')
+    cols_config.remove('config.val_size')
+
+    try:
+        cols_config.remove('config.chosen_lr')
+        cols_config.remove('config.chosen_n_epoch')
+    except:
+        pass
 
     configurations = df_pred[cols_config].drop_duplicates().reset_index(drop=True)
 
