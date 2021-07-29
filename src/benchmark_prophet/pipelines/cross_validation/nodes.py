@@ -223,7 +223,7 @@ def run_cv(dataset, params):
         for k in model_parameters.keys()
         if k != 'n_forecasts'
     }
-    variable_params.update({"n_forecasts": list_n_forecasts})
+    variable_params.update({"n_forecasts": tune.grid_search(list_n_forecasts)})
     variable_params.update({"time_series": time_series_list})
 
     def train(config):
