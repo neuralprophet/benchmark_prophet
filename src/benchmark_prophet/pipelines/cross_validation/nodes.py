@@ -48,31 +48,31 @@ def model_cv_run(tr, vl, model_parameters_list, config):
     }
     if config["method"].lower() == "np":
         (y_rolled, y_pred_rolled), additional_info = _train_predict_np(
-            tr, vl, model_parameters, config["freq"], config["test_size"]
+            tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
     elif config["method"].lower() == 'lstm':
         (y_rolled, y_pred_rolled), additional_info = _train_predict_lstm(
-            tr, vl, model_parameters, config["freq"], config["test_size"]
+            tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
     elif config["method"].lower() == 'nbeats':
         (y_rolled, y_pred_rolled), additional_info = _train_predict_nbeats(
-            tr, vl, model_parameters, config["freq"], config["test_size"]
+            tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
     elif config["method"].lower() == 'deepar':
         (y_rolled, y_pred_rolled), additional_info = _train_predict_deepar(
-            tr, vl, model_parameters, config["freq"], config["test_size"]
+            tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
     elif config["method"].lower() == 'tft':
         (y_rolled, y_pred_rolled), additional_info = _train_predict_tft(
-            tr, vl, model_parameters, config["freq"], config["test_size"]
+            tr, vl, model_parameters, config["freq"], config["val_size"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
@@ -80,7 +80,7 @@ def model_cv_run(tr, vl, model_parameters_list, config):
         n_lags = model_parameters.pop("n_lags")
         n_forecasts = model_parameters.pop("n_forecasts")
         (y_rolled, y_pred_rolled), additional_info = _train_predict_prophet(
-            tr, vl, model_parameters, config["test_size"], config["freq"]
+            tr, vl, model_parameters, config["val_size"], config["freq"]
         )
         return (y_rolled, y_pred_rolled), additional_info
 
@@ -105,7 +105,7 @@ def model_cv_run(tr, vl, model_parameters_list, config):
         order = (n_lags, integration, ma)
         model_parameters.update({"order": order})
         (y_rolled, y_pred_rolled), additional_info = _train_predict_arima(
-            tr, vl, model_parameters, config["test_size"], n_forecasts
+            tr, vl, model_parameters, config["val_size"], n_forecasts
         )
         return (y_rolled, y_pred_rolled), additional_info
     elif config["method"].lower() == "sarima":
@@ -132,7 +132,7 @@ def model_cv_run(tr, vl, model_parameters_list, config):
         model_parameters.update({"seasonal_order": seasonal_order})
 
         (y_rolled, y_pred_rolled), additional_info = _train_predict_sarima(
-            tr, vl, model_parameters, config["test_size"], n_forecasts
+            tr, vl, model_parameters, config["val_size"], n_forecasts
         )
         if "seasonal" not in config.keys():
             additional_info.update({"seasonal": seasonal})
@@ -214,6 +214,10 @@ def run_cv(dataset, params):
         model_parameters.update({"n_forecasts": list([1])})
     time_series_list = tune.grid_search(list(dataset.keys()))
 
+    if type(params['n_forecasts']) == list and len(params['n_forecasts']) > 1:
+        print('n forecasts should be fixed')
+        exit()
+
     variable_params = {
         k: tune.grid_search(model_parameters[k]) for k in model_parameters.keys()
     }
@@ -224,11 +228,11 @@ def run_cv(dataset, params):
         ts = dataset[config["time_series"]]
         dataset_name = "_".join(config["time_series"].split("_")[:-1])
         freq = params[dataset_name]["freq"]
-        cv_dataset, test_size, train_folds = preprocess_data_cv(
+        cv_dataset, test_size, val_size, train_folds = preprocess_data_cv(
             ts, params, config["n_lags"], config["n_forecasts"]
         )
 
-        config.update({"freq": freq, "test_size": test_size})
+        config.update({"freq": freq, "test_size": test_size, "val_size":val_size})
 
         y_true, y_pred = run_and_process_results(
             cv_dataset, model_parameters_list, config
@@ -281,9 +285,9 @@ def run_cv(dataset, params):
     results = pd.concat(dfs)
 
     cv_results_with_predictions = {
-        f"results_cv_pred_{params['input']}_{method}": results
+        f"results_cv_pred_{params['input']}_{method}_horizon_{params['n_forecasts']}": results
     }
 
-    train_fold_results = {f"train_fold_{params['input']}_{method}":train_folds_from_results}
+    train_fold_results = {f"train_fold_{params['input']}_{method}_horizon_{params['n_forecasts']}":train_folds_from_results}
 
     return cv_results_with_predictions, train_fold_results

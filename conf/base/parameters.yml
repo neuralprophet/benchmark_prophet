@@ -31,8 +31,10 @@ NPParameterList:
 - n_lags
 - n_forecasts
 - learning_rate
+- epochs
 - num_hidden_layers
 - d_hidden
+
 #- growth
 #- changepoints
 #- n_changepoints
@@ -45,8 +47,6 @@ NPParameterList:
 #- seasonality_mode
 #- seasonality_reg
 #- ar_sparsity
-- learning_rate
-- epochs
 #- batch_size
 #- loss_func
 #- train_speed
@@ -80,15 +80,13 @@ ProphetParameterList:
 attention_head_size:
 - 1
 - 8
+
 d_hidden:
-- 8
 - 16
 epochs:
-- 10
-- 40
 - 100
 
-fold_overlap_pct: 0.05
+fold_overlap_pct: 0
 
 hidden_continuous_size:
 - 8
@@ -114,17 +112,19 @@ method: NP
 
 n_forecasts:
 - 1
-- 6
-- 24
+#- 6
+#- 24
 
 n_lags:
 - 12
-- 24
-- 72
+#- 24
+#- 72
 
 num_hidden_layers:
+- 0
 - 1
 - 4
+
 
 #parameter_list: DeepARParameterList
 
@@ -139,9 +139,10 @@ rnn_layers:
 seasonal:
 - 24
 
-test_proportion: 0.05
-
-
+test_proportion: 0.25
+validation_proportion: 0.05
+#25% test, 50% train, 25% validation
+#add n_forecasts into the naming
 
 
 

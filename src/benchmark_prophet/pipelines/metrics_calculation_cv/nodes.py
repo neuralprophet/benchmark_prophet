@@ -15,8 +15,8 @@ def wape(a, f):
 def calculate_metrics(results_cv_with_predictions_refactored, train_fold_results, params):
     method = params['method']
 
-    df_pred = results_cv_with_predictions_refactored[f"results_cv_pred_{params['input']}_{method}"]().copy(deep = True)
-    train_folds = train_fold_results[f"train_fold_{params['input']}_{method}"]().copy(deep = True)
+    df_pred = results_cv_with_predictions_refactored[f"results_cv_pred_{params['input']}_{method}_horizon_{params['n_forecasts']}"]().copy(deep = True)
+    train_folds = train_fold_results[f"train_fold_{params['input']}_{method}_horizon_{params['n_forecasts']}"]().copy(deep = True)
 
     cols_config = [col for col in df_pred.columns if 'config.' in col]
 

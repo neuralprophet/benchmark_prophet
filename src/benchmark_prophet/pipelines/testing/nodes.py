@@ -215,6 +215,10 @@ def run_testing(dataset, params):
         model_parameters.update({"n_forecasts": list([1])})
     time_series_list = tune.grid_search(list(dataset.keys()))
 
+    if type(params['n_forecasts']) == list and len(params['n_forecasts']) > 1:
+        print('n forecasts should be fixed')
+        exit()
+
     variable_params = {
         k: tune.grid_search(model_parameters[k]) for k in model_parameters.keys()
     }
@@ -225,10 +229,10 @@ def run_testing(dataset, params):
         ts = dataset[config["time_series"]]
         dataset_name = "_".join(config["time_series"].split("_")[:-1])
         freq = params[dataset_name]["freq"]
-        cv_dataset, test_size, train_folds = preprocess_data_test(
+        cv_dataset, test_size, val_size, train_folds = preprocess_data_test(
             ts, params, config["n_lags"], config["n_forecasts"]
         )
-        config.update({"freq": freq, "test_size": test_size})
+        config.update({"freq": freq, "test_size": test_size, "val_size":val_size})
 
         y_true, y_pred = run_and_process_results(
             cv_dataset, model_parameters_list, config
@@ -279,9 +283,9 @@ def run_testing(dataset, params):
     results = pd.concat(dfs)
 
     test_results_with_predictions = {
-        f"results_test_pred_{params['input']}_{method}": results
+        f"results_test_pred_{params['input']}_{method}_horizon_{params['n_forecasts']}": results
     }
 
-    train_fold_results = {f"train_fold_{params['input']}_{method}": train_folds_from_results}
+    train_fold_results = {f"train_fold_{params['input']}_{method}_horizon_{params['n_forecasts']}": train_folds_from_results}
 
     return test_results_with_predictions, train_fold_results

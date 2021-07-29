@@ -87,8 +87,8 @@ def _train_predict_np(tr, vl, model_parameters, freq, test_size):
     return (
         (y_rolled, y_pred_rolled),
         {
-            "lr": [lr],
-            "n_epoch": [n_epochs],
+            "chosen_lr": [lr],
+            "chosen_n_epoch": [n_epochs],
             "training_time": [training_time],
             "predicting_time": [predicting_time],
         },
@@ -115,8 +115,8 @@ def _train_predict_lstm(tr, vl, model_parameters, freq, test_size):
     return (
         (y_rolled, y_pred_rolled),
         {
-            "lr": [lr],
-            "n_epoch": [n_epochs],
+            "chosen_lr": [lr],
+            "chosen_n_epoch": [n_epochs],
             "training_time": [training_time],
             "predicting_time": [predicting_time],
         },
@@ -441,9 +441,11 @@ def _crossvalidation_split_df(
 def preprocess_data_cv(ts, params, n_lags, n_forecasts):
     k = params["k"]
     test_proportion = params["test_proportion"]
+    validation_proportion = params["validation_proportion"]
     fold_overlap_pct = params["fold_overlap_pct"]
     len_ts = ts.shape[0]
     test_size = int(test_proportion * len_ts)
+    val_size = int(validation_proportion * len_ts)
     method = params["method"].lower()
 
     np_like_methods = [
@@ -467,7 +469,7 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
             n_lags=n_lags,
             n_forecasts=n_forecasts,
             k=k,
-            fold_pct=test_size,
+            fold_pct=val_size,
             fold_overlap_pct=fold_overlap_pct,
         )
         dataset = []
@@ -488,7 +490,7 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
             n_lags=n_lags,
             n_forecasts=1,
             k=k,
-            fold_pct=test_size,
+            fold_pct=val_size,
             fold_overlap_pct=fold_overlap_pct,
         )
         dataset = []
@@ -525,15 +527,17 @@ def preprocess_data_cv(ts, params, n_lags, n_forecasts):
             y_vl = y_vl[-test_size:].ravel()
 
             dataset.append([(X_tr, y_tr), (X_vl, y_vl)])
-    return dataset, test_size, pd.concat(train_folds)
+    return dataset, test_size, val_size, pd.concat(train_folds)
 
 
 def preprocess_data_test(ts, params, n_lags, n_forecasts):
     k = params["k"]
     test_proportion = params["test_proportion"]
+    validation_proportion = params["validation_proportion"]
     fold_overlap_pct = params["fold_overlap_pct"]
     len_ts = ts.shape[0]
     test_size = int(test_proportion * len_ts)
+    val_size = int(validation_proportion*len_ts)
     method = params["method"].lower()
 
     np_like_methods = [
@@ -607,4 +611,4 @@ def preprocess_data_test(ts, params, n_lags, n_forecasts):
             y_vl = y_vl[-test_size:].ravel()
 
             dataset.append([(X_tr, y_tr), (X_vl, y_vl)])
-    return dataset, test_size, pd.concat(train_folds)
+    return dataset, test_size, val_size, pd.concat(train_folds)
