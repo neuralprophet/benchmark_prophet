@@ -116,8 +116,8 @@ n_forecasts:
 #- 24
 
 n_lags:
-- 12
-#- 24
+#- 12
+- 48
 #- 72
 
 num_hidden_layers:
