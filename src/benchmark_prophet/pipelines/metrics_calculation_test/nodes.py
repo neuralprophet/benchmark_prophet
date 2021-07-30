@@ -105,7 +105,7 @@ def calculate_metrics(results_cv_with_predictions_refactored, train_fold_results
         metrices.append(pd.concat(metrices_ts))
 
     metrics = {
-        f"metrics_test_{params['input']}_{method}": pd.concat(metrices)
+        f"metrics_test_{params['input']}_{method}_horizon_{params['n_forecasts']}": pd.concat(metrices)
     }
 
     return metrics
